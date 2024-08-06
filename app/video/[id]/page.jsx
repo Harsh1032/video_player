@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
           url: overlayUrl,
         },
       ],
-      url: `${process.env.NEXT_PUBLIC_BASE_URL}/video/${params.id}`,
+      url: `${process.env.BASE_URL}/video/${params.id}`,
     },
     twitter: {
       title: `Video for ${videoData.name}`,
