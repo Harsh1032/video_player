@@ -15,6 +15,7 @@ export async function generateMetadata({ params }) {
 
   const overlayUrl = `${process.env.BASE_URL}/api/generate-image-overlay?imageUrl=${videoData.websiteUrl}&webcamImageUrl=${videoData.image}`;
 
+  const baseUrl = `${process.env.BASE_URL}/video/${params.id}`;
   return {
     title: `Video for ${videoData.name}`,
     description: `Watch the video for ${videoData.name}`,
@@ -26,7 +27,7 @@ export async function generateMetadata({ params }) {
           url: overlayUrl,
         },
       ],
-      url: `${process.env.BASE_URL}/video/${params.id}`,
+      url: baseUrl,
     },
     twitter: {
       title: `Video for ${videoData.name}`,
