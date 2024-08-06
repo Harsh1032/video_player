@@ -1,5 +1,5 @@
 
-import Redirect from '@components/redirect';
+import Redirect from '@components/Redirect';
 
 const page = () => {
   return (
