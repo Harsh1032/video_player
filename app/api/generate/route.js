@@ -11,6 +11,8 @@ const bucket = storage.bucket(process.env.GCS_BUCKET_NAME);
 
 export const POST = async (request) => {
     try {
+        console.log("Starting POST /api/generate");
+
         const { name, websiteUrl, videoUrl, timeFullScreen, videoDuration, image } = await request.json();
 
         if (!name || !websiteUrl || !videoUrl || !timeFullScreen || !videoDuration || !image) {
