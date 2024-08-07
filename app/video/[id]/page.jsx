@@ -22,8 +22,8 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const overlayUrl = `${process.env.BASE_URL}/api/generate-image-overlay?imageUrl=${videoData.websiteUrl}&webcamImageUrl=${videoData.image}`;
-  const baseUrl = `${process.env.BASE_URL}/video/${params.id}`;
+  const overlayUrl = `${process.env.BASE_URL}/api/generate-image-overlay?imageUrl=${encodeURIComponent(videoData.websiteUrl)}&webcamImageUrl=${encodeURIComponent(videoData.image)}`;
+   const baseUrl = `${process.env.BASE_URL}/video/${params.id}`;
 
   return {
     title: `Video for ${videoData.name}`,
