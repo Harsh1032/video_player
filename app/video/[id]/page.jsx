@@ -10,12 +10,21 @@ export async function generateMetadata({ params }) {
     return {
       title: 'Video not found',
       description: 'The requested video could not be found.',
+      openGraph: {
+        title: 'Video not found',
+        description: 'The requested video could not be found.',
+        url: `${process.env.BASE_URL}/video/${params.id}`,
+      },
+      twitter: {
+        title: 'Video not found',
+        description: 'The requested video could not be found.',
+      },
     };
   }
 
   const overlayUrl = `${process.env.BASE_URL}/api/generate-image-overlay?imageUrl=${videoData.websiteUrl}&webcamImageUrl=${videoData.image}`;
-
   const baseUrl = `${process.env.BASE_URL}/video/${params.id}`;
+
   return {
     title: `Video for ${videoData.name}`,
     description: `Watch the video for ${videoData.name}`,
@@ -25,6 +34,9 @@ export async function generateMetadata({ params }) {
       images: [
         {
           url: overlayUrl,
+          width: 1200,
+          height: 630,
+          alt: "Default Image",
         },
       ],
       url: baseUrl,
@@ -35,8 +47,12 @@ export async function generateMetadata({ params }) {
       images: [
         {
           url: overlayUrl,
+          width: 1200,
+          height: 630,
+          alt: "Default Image",
         },
       ],
+      url: baseUrl,
     },
   };
 }
