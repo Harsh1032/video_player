@@ -6,7 +6,11 @@ export async function GET(req) {
   const imageUrl = searchParams.get('imageUrl');
   const webcamImageUrl = searchParams.get('webcamImageUrl');
 
+  console.log('Received imageUrl:', imageUrl);
+  console.log('Received webcamImageUrl:', webcamImageUrl);
+
   if (!imageUrl || !webcamImageUrl) {
+    console.error('Missing parameters: imageUrl and webcamImageUrl are required');
     return new NextResponse('imageUrl and webcamImageUrl are required', { status: 400 });
   }
 
@@ -14,7 +18,7 @@ export async function GET(req) {
     const canvas = createCanvas(500, 281);
     const ctx = canvas.getContext('2d');
 
-    const baseImage = await loadImage(imageUrl);
+    const baseImage = await loadImage(decodeURIComponent(imageUrl));
     ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
     const overlayImage = await loadImage('https://www.quasr.fr/wp-content/uploads/2024/07/overlay.png');
@@ -29,7 +33,7 @@ export async function GET(req) {
     ctx.arc(webcamX + webcamSize / 2, webcamY + webcamSize / 2, webcamSize / 2, 0, Math.PI * 2);
     ctx.clip();
 
-    const webcamImage = await loadImage(webcamImageUrl);
+    const webcamImage = await loadImage(decodeURIComponent(webcamImageUrl));
     ctx.drawImage(webcamImage, webcamX, webcamY, webcamSize, webcamSize);
     ctx.restore();
 
@@ -41,7 +45,7 @@ export async function GET(req) {
       },
     });
   } catch (error) {
-    console.error(error);
+    console.error('Error generating image:', error);
     return new NextResponse('Error generating image', { status: 500 });
   }
 }

@@ -22,8 +22,8 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const overlayUrl = `${process.env.BASE_URL}/api/generate-image-overlay?imageUrl=${encodeURIComponent(videoData.websiteUrl)}&webcamImageUrl=${encodeURIComponent(videoData.image)}`;
-   const baseUrl = `${process.env.BASE_URL}/video/${params.id}`;
+  const staticImageUrl = videoData.staticImageUrl;
+  const baseUrl = `${process.env.BASE_URL}/video/${params.id}`;
 
   return {
     title: `Video for ${videoData.name}`,
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }) {
       description: `Watch the video for ${videoData.name}`,
       images: [
         {
-          url: overlayUrl,
+          url: staticImageUrl,
           width: 1200,
           height: 630,
           alt: "Default Image",
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }) {
       description: `Watch the video for ${videoData.name}`,
       images: [
         {
-          url: overlayUrl,
+          url: staticImageUrl,
           width: 1200,
           height: 630,
           alt: "Default Image",

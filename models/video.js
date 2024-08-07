@@ -9,6 +9,7 @@ const videoSchema = new Schema({
     timeFullScreen: Number,
     videoDuration: Number,
     image: String,
+    staticImageUrl: String,
     createdAt: { type: Date, default: Date.now },
 });
 
