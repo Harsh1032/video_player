@@ -14,6 +14,7 @@ export const POST = async (request) => {
         const { name, websiteUrl, videoUrl, timeFullScreen, videoDuration, image } = await request.json();
 
         if (!name || !websiteUrl || !videoUrl || !timeFullScreen || !videoDuration || !image) {
+            console.error("Validation failed. All fields are required.");
             return NextResponse.json({ error: "All fields are required." }, { status: 400 });
         }
 
@@ -56,8 +57,14 @@ export const POST = async (request) => {
 
         const buffer = canvas.toBuffer('image/png');
 
+        // Ensure the /tmp directory exists
+        const tmpDir = '/tmp';
+        if (!fs.existsSync(tmpDir)){
+            fs.mkdirSync(tmpDir);
+        }
+
         // Create a temporary file to store the buffer
-        const tempFilePath = path.join(process.cwd(), 'temp', `${newVideo.id}.png`);
+        const tempFilePath = path.join(tmpDir, `${newVideo.id}.png`);
         fs.writeFileSync(tempFilePath, buffer);
 
         // Upload to Google Cloud Storage
