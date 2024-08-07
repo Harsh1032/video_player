@@ -3,7 +3,11 @@ import { connectToDB } from "@utils/database";
 import { NextResponse } from 'next/server';
 import { createCanvas, loadImage } from 'canvas';
 import path from 'path';
+import { Storage } from '@google-cloud/storage';
 import fs from 'fs';
+
+const storage = new Storage();
+const bucket = storage.bucket(process.env.GCS_BUCKET_NAME);
 
 export const POST = async (request) => {
     try {
@@ -28,8 +32,6 @@ export const POST = async (request) => {
 
         console.log('Before setting staticImageUrl:', newVideo);
 
-        const staticImagePath = path.join(process.cwd(), 'public', 'static', `${newVideo.id}.png`);
-
         const canvas = createCanvas(500, 281);
         const ctx = canvas.getContext('2d');
 
@@ -53,20 +55,30 @@ export const POST = async (request) => {
         ctx.restore();
 
         const buffer = canvas.toBuffer('image/png');
-        fs.writeFileSync(staticImagePath, buffer);
 
-        const staticImageUrl = `${process.env.BASE_URL}/static/${newVideo.id}.png`;
-        console.log('Static Image URL:', staticImageUrl);
+        // Create a temporary file to store the buffer
+        const tempFilePath = path.join(process.cwd(), 'temp', `${newVideo.id}.png`);
+        fs.writeFileSync(tempFilePath, buffer);
 
-        // Update the staticImageUrl in the document
-        newVideo.staticImageUrl = staticImageUrl;
-        
-        // Use findOneAndUpdate to ensure the update is applied
-        await Video.findOneAndUpdate(
-            { id: newVideo.id },
-            { staticImageUrl: staticImageUrl },
-            { new: true }
-        );
+        // Upload to Google Cloud Storage
+        await bucket.upload(tempFilePath, {
+            destination: `${newVideo.id}.png`,
+            metadata: {
+                contentType: 'image/png',
+            },
+        });
+
+        // Get the public URL of the uploaded image
+        const publicUrl = `https://storage.googleapis.com/${process.env.GCS_BUCKET_NAME}/${newVideo.id}.png`;
+        newVideo.staticImageUrl = publicUrl;
+
+        console.log('Static Image URL:', publicUrl);
+
+        // Save the updated video document with the staticImageUrl
+        await newVideo.save();
+
+        // Delete the temporary file
+        fs.unlinkSync(tempFilePath);
 
         console.log('After saving newVideo with staticImageUrl:', newVideo);
 
