@@ -60,14 +60,17 @@ export const POST = async (request) => {
         // Ensure the /tmp directory exists
         const tmpDir = '/tmp';
         if (!fs.existsSync(tmpDir)){
+            console.log('Creating /tmp directory');
             fs.mkdirSync(tmpDir);
         }
 
         // Create a temporary file to store the buffer
         const tempFilePath = path.join(tmpDir, `${newVideo.id}.png`);
+        console.log(`Writing buffer to ${tempFilePath}`);
         fs.writeFileSync(tempFilePath, buffer);
 
         // Upload to Google Cloud Storage
+        console.log(`Uploading ${tempFilePath} to Google Cloud Storage`);
         await bucket.upload(tempFilePath, {
             destination: `${newVideo.id}.png`,
             metadata: {
@@ -85,6 +88,7 @@ export const POST = async (request) => {
         await newVideo.save();
 
         // Delete the temporary file
+        console.log(`Deleting temporary file ${tempFilePath}`);
         fs.unlinkSync(tempFilePath);
 
         console.log('After saving newVideo with staticImageUrl:', newVideo);
