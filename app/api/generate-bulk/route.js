@@ -1,5 +1,5 @@
 import Video from "@models/video";
-import CsvFile from "@models/csvFile";
+import CsvFile from "@models/csvFile"; // Ensure you import the CsvFile model
 import { connectToDB } from "@utils/database";
 import { NextResponse } from 'next/server';
 import { createCanvas, loadImage } from 'canvas';
@@ -90,6 +90,7 @@ export const POST = async (request) => {
 
       return {
         ...video,
+        id: newVideo.id,
         link: `${process.env.BASE_URL}/video/${newVideo.id}`,
         staticImageUrl: publicUrl,
       };
@@ -97,19 +98,40 @@ export const POST = async (request) => {
 
     const csvData = Papa.unparse(savedVideos);
     const fileName = originalFileName || `generated_videos_${Date.now()}.csv`;
-    const csvFilePath = path.join('/tmp', fileName);
-    fs.writeFileSync(csvFilePath, csvData, 'utf8');
+    const downloadLink = `${process.env.BASE_URL}/downloads/${fileName}`;
 
     const newCsvFile = new CsvFile({
       fileName,
       numberOfPages: savedVideos.length,
-      downloadLink: `/downloads/${fileName}`,
-      videoIds: savedVideos.map(video => video._id),
+      downloadLink,
+      videoIds: savedVideos.map(video => video.id), // Ensure using `id`
     });
 
     await newCsvFile.save();
 
-    return NextResponse.json({ csvLink: `/downloads/${fileName}`, videoLinks: savedVideos.map(v => v.link) }, { status: 201 });
+    // Store the CSV file temporarily and provide the download link
+    const csvFilePath = path.join('/tmp', fileName);
+    fs.writeFileSync(csvFilePath, csvData, 'utf8');
+
+    // Optionally, upload the CSV file to S3 for public access (if needed)
+    const s3CsvParams = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `csv/${fileName}`,
+      Body: fs.createReadStream(csvFilePath),
+      ContentType: 'text/csv'
+    };
+
+    const csvUploadResult = await s3.upload(s3CsvParams).promise();
+    const csvPublicUrl = csvUploadResult.Location;
+
+    // Update the CSV file entry with the S3 URL
+    newCsvFile.downloadLink = csvPublicUrl;
+    await newCsvFile.save();
+
+    // Clean up temporary CSV file
+    fs.unlinkSync(csvFilePath);
+
+    return NextResponse.json({ csvLink: csvPublicUrl, videoLinks: savedVideos.map(v => v.link) }, { status: 201 });
   } catch (error) {
     console.error("Error generating bulk videos:", error);
     return NextResponse.json({ error: "Failed to generate bulk videos" }, { status: 500 });
