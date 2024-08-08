@@ -173,30 +173,30 @@ const Form = () => {
     }
   };
 
-  const submitBulkData = async (videos, originalFileName) => {
-    try {
-      const response = await fetch(`/api/generate-bulk`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ videos, originalFileName }),
-      });
+const submitBulkData = async (videos, originalFileName) => {
+  try {
+    const response = await fetch(`/api/generate-bulk`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ videos, originalFileName }),
+    });
 
-      const data = await response.json();
-      if (response.ok) {
-        toast.success("Templates successfully generated");
-        generateDownloadableFile(data.links, videos);
-        fetchVideos();
-        fetchCsvFiles();
-      } else {
-        toast.error(`${data.error}`);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("An error occurred while generating the bulk video links.");
+    const data = await response.json();
+    if (response.ok) {
+      toast.success("Templates successfully generated");
+      generateDownloadableFile(data.videoLinks, videos);
+      fetchVideos();
+      fetchCsvFiles();
+    } else {
+      toast.error(`${data.error}`);
     }
-  };
+  } catch (error) {
+    console.error("Error:", error);
+    toast.error("An error occurred while generating the bulk video links.");
+  }
+};
 
   const getVideoDuration = (url) => {
     return new Promise((resolve) => {
@@ -213,7 +213,7 @@ const Form = () => {
       ...video,
       link: links[index],
     }));
-
+  
     const csv = Papa.unparse(rows);
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
@@ -222,7 +222,6 @@ const Form = () => {
     a.download = "generated_videos.csv";
     a.click();
     URL.revokeObjectURL(url);
-    
   };
 
   const handleVideoUrlChange = (e) => {
@@ -282,7 +281,7 @@ const Form = () => {
         <span>{file.numberOfPages}</span>
         <span>{new Date(file.generatedAt).toLocaleDateString()}</span>
         <a
-          href={`/downloads/${file.fileName}`}
+          href={file.downloadLink}
           className="p-1 bg-blue-500 hover:bg-blue-400 text-white rounded"
           download
         >
