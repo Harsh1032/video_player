@@ -37,7 +37,7 @@ const Form = () => {
 
   const fetchCsvFiles = async () => {
     try {
-      const response = await fetch(`/api/csv-files`);
+      const response = await fetch(`/api/csv-files`, { cache: 'no-store' });
       const data = await response.json();
       if (response.ok) {
         setCsvFiles(data);
