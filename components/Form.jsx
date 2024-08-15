@@ -163,7 +163,7 @@ const Form = () => {
       if (response.ok) {
         const videoId = data.link.split("/").pop();
         router.push(`/video/${videoId}`);
-        // fetchVideos();
+        fetchVideos();
       } else {
         toast.error(`${data.error}`);
       }

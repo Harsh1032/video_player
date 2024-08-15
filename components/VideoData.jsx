@@ -42,7 +42,9 @@ const VideoData = ({
     const overlayUrl = `${baseURL}/generate-image-overlay?imageUrl=${websiteUrl}&webcamImageUrl=${image}`;
     setImageUrl(overlayUrl);
   }, [websiteUrl, image]);
-
+  console.log(websiteUrl);
+  console.log(image);
+  
   useEffect(() => {
     (async function () {
       try {

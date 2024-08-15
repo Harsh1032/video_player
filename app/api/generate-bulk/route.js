@@ -43,7 +43,7 @@ export const POST = async (request) => {
       const canvas = createCanvas(500, 281);
       const ctx = canvas.getContext('2d');
 
-      const baseImage = await loadImage(image);
+      const baseImage = await loadImage(websiteUrl);
       ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
 
       const overlayImage = await loadImage('https://www.quasr.fr/wp-content/uploads/2024/07/overlay.png');
