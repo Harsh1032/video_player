@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import CsvFile from "@models/csvFile";
 import { connectToDB } from "@utils/database";
 import { NextResponse } from 'next/server';

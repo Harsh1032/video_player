@@ -1,3 +1,5 @@
+export const dynamic = 'force-static'
+
 import Video from "@models/video";
 import { connectToDB } from "@utils/database";
 import { NextResponse } from 'next/server';
