@@ -1,4 +1,4 @@
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'
 
 import CsvFile from "@models/csvFile";
 import { connectToDB } from "@utils/database";

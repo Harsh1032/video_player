@@ -1,4 +1,4 @@
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'
 
 import Video from "@models/video";
 import { connectToDB } from "@utils/database";
