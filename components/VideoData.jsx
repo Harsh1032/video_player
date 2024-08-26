@@ -303,22 +303,20 @@ const VideoData = ({
 
   const handleClick = () => {
     window.location.href =
-      "https://cal.com/gvald/appel?date=2024-07-15&month=2024-07";
+      "https://www.quasr.fr/cro/", "_blank";
   };
 
   return (
-    <div className="flex flex-col w-full h-full bg-slate-400 justify-center items-center overflow-y-scroll no-scrollbar">
-      <div className="h-[10%] flex flex-col w-full text-center justify-end">
-        <span className="xs:text-base md:text-2xl xl:text-4xl h-full xs:w-full font-bold pt-9 z-10">
-          Vidéo à l'attention de Denis {name}
-        </span>
-      </div>
-      <div className="flex xs:flex-col h-[90%] w-[90%] xs:mb-5 md:flex-row items-center justify-center">
-        <div className="flex flex-col items-center justify-center md:w-[60%] md:h-[100%] xs:w-[100%] xs:h-[60%] bg-slate-400 xs:pt-2 md:ml-5">
+    <div className="flex flex-col w-full h-full bg-white justify-center items-center overflow-y-scroll no-scrollbar">
+      <div className="flex xs:flex-col h-[100%] w-[90%] xs:mb-5 md:flex-row items-center justify-center">
+        <div className="flex flex-col items-center justify-center md:w-[45%] md:h-[100%] xs:w-[100%] xs:h-[60%] bg-white xs:pt-2 md:ml-5">
+          <p className="quasr-header-txt text-center justify-end">
+          Vidéo à l'attention de <span className="quasr-header-txt-bold">{name}</span>
+          </p>
           <div
             className={`video-container paused ${
               isFullScreen ? "full-screen" : ""
-            }  xs:w-[100%] xl:w-[95%]`}
+            }  xs:w-[100%] xl:w-[100%]`}
             data-volume-level="high"
             ref={videoContainerRef}
           >
@@ -363,12 +361,12 @@ const VideoData = ({
                   onClick={togglePlayPause}
                 >
                   <svg viewBox="0 0 24 24" className="play-button-icon">
-                    <path fill="currentColor" d="M8 5v14l11-7z"></path>
+                    <path fill="white" d="M8 6.82v10.36c0 .79.87 1.27 1.54.84l8.14-5.18a1 1 0 0 0 0-1.69L9.54 5.98A.998.998 0 0 0 8 6.82"></path>
                   </svg>
                 </div>
                 <div className="play-message xs:mt-3 md:mt-1">
-                  <span className="font-medium">
-                    Play {videoDuration} sec video
+                  <span className="font-medium play-vid-txt">
+                    Lire la vidéo (<u>{videoDuration} sec</u>)
                   </span>
                 </div>
               </>
@@ -475,29 +473,20 @@ const VideoData = ({
               </>
             )}
           </div>
-          <div className="flex items-center justify-center xs:w-[100%] md:w-[85%] xl:w-[95%] md:mt-[5%] xs:mt-3 z-1">
+          <div className="flex items-center justify-center xs:w-[100%] md:w-[100%] xl:w-[100%] md:mt-[5%] xs:mt-8 z-1">
             <div className="md:w-[100%] flex justify-between items-center xs:w-[100%]">
               <Image
                 src={Logo}
-                className="md:w-[25%] md:max-h-[20%] xl:max-h-[30%] xs:w-[80px] xs:h-[40px]"
+                className="md:w-[15%] xl:max-h-[30%] xs:w-[80px]"
               />
               <button
                 onClick={handleClick}
-                className="bg-black text-white xs:w-max-w-[50%] xs:h-[40px] p-1 rounded-xl  md:max-w-[60%] md:max-h-[25%] md:text-base xl:text-xl xs:text-sm"
+                className="btn-quasr bg-black text-white xs:w-max-w-[50%] xs:h-[50px] p-1 rounded-xl  md:max-w-[60%] md:max-h-[25%] md:text-base xl:text-xl xs:text-sm"
+                target="_blank"
               >
-                Plannifier un appel gratuit
+                En savoir plus 👀
               </button>
             </div>
-          </div>
-        </div>
-        <div className="xs:flex xs:items-center xs:justify-center xs:w-[100%] xs:mt-5 xs:h-[400px] md:h-[90%] md:w-[34%] xl:h-[95%] object-contain overflow-y-scroll no-scrollbar">
-          <div className="md:w-[80%] xs:w-[100%] xs:h-[100%] overflow-y-scroll no-scrollbar xs:flex xs:items-center xs:justify-center">
-            <Cal
-              calLink="gvald/appel"
-              style={{ width: "100%", height: "100%" }}
-              config={{ layout: "month_view" }}
-              className="overflow-y-scroll no-scrollbar object-cover"
-            ></Cal>
           </div>
         </div>
       </div>
