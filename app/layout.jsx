@@ -42,6 +42,7 @@ const layout = ({children}) => {
       <Head>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
         <link rel="icon" href="https://www.quasr.fr/wp-content/uploads/2023/12/bigfav-lightv.png" sizes="192x192" />
+        <link rel="icon" href="https://www.quasr.fr/wp-content/uploads/2023/12/bigfav-lightv-150x150.png" sizes="any" />
       </Head>
     <body className="w-full h-screen bg-slate-400">
       <AuthProvider>

@@ -349,6 +349,7 @@ const VideoData = ({
                 onClick={togglePlayPause}
                 controls={false}
                 style={{ aspectRatio: "1 / 1", objectFit: "cover" }}
+                playsInline
               >
                 <source src={videoUrl} type="video/mp4" />
                 Your browser does not support the video tag.
