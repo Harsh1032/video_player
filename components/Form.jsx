@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Papa from "papaparse";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { FaTrashAlt, FaHistory } from "react-icons/fa";
+import { FaTrashAlt, FaHistory, FaSync } from "react-icons/fa";
 
 const Form = () => {
   const baseURL = process.env.BASE_URL;
@@ -19,12 +19,12 @@ const Form = () => {
   const [uploadStatus, setUploadStatus] = useState(""); // State to manage upload status
   const [mode, setMode] = useState("single"); // State to manage form mode
   const [csvFile, setCsvFile] = useState(null); // State to manage CSV file
-
   const [csvFiles, setCsvFiles] = useState([]);
   const [showCsvDropdown, setShowCsvDropdown] = useState(false);
-
   const [videos, setVideos] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [showResetDropdown, setShowResetDropdown] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false); // State for tracking reset
 
   const videoRef = useRef(null);
   const fileInputRef = useRef(null);
@@ -62,6 +62,31 @@ const Form = () => {
       console.error("Error fetching videos:", error);
     }
   };
+
+   // API Call to reset both videos and CSVs
+   const resetDatabase = async () => {
+    try {
+      setIsDeleting(true);  // Set loading state
+      const response = await fetch(`/api/reset-button`, {
+        method: "DELETE",  // Call the DELETE endpoint to reset
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        toast.success(data.message);  // Show success message
+        fetchVideos(); // Refresh videos after reset
+        fetchCsvFiles(); // Refresh CSV history after reset
+      } else {
+        toast.error(data.error);
+      }
+    } catch (error) {
+      console.error("Error resetting the database:", error);
+      toast.error("An error occurred while resetting the database.");
+    } finally {
+      setIsDeleting(false); // Reset loading state
+    }
+  };
+
 
   const deleteVideo = async (id) => {
     try {
@@ -382,10 +407,19 @@ const submitBulkData = async (videos, originalFileName) => {
         <ToastContainer />
       </form>
 
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 right-8">
+        <button 
+          className="relative z-10 p-2 bg-gray-600 hover:bg-gray-500 text-white rounded-full " 
+          onClick={resetDatabase} 
+          disabled={isDeleting}
+          onMouseEnter={() => setShowResetDropdown(true)}
+          onMouseLeave={() => setShowResetDropdown(false)}
+          >
+          <FaSync />
+        </button>
         <button
           onClick={() => setShowDropdown(!showDropdown)}
-          className="relative z-10 p-2 bg-gray-600 hover:bg-gray-500 text-white rounded-full"
+          className="relative z-10 p-2 bg-gray-600 hover:bg-gray-500 text-white rounded-full ml-2"
         >
           <FaTrashAlt />
         </button>
@@ -395,6 +429,27 @@ const submitBulkData = async (videos, originalFileName) => {
         >
           <FaHistory />
         </button>
+        {showResetDropdown && (
+          <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-64 overflow-y-scroll no-scrollbar">
+              <div className="flex justify-center p-2">
+                <span className="text-xl font-semibold">
+                  RESET THE DATABASE
+                </span>
+              </div>
+          </div>
+        )}
+        {showDropdown && (
+          <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-64 overflow-y-scroll no-scrollbar">
+            <ul className="divide-y divide-gray-200">{renderVideos(videos)}</ul>
+            {videos.length <= 0 && (
+              <div className="flex justify-center p-2">
+                <span className="text-xl font-semibold">
+                  No video generated
+                </span>
+              </div>
+            )}
+          </div>
+        )}
 
         {showDropdown && (
           <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-300 rounded-lg shadow-lg z-20 max-h-64 overflow-y-scroll no-scrollbar">
