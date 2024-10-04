@@ -15,7 +15,7 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
-const BATCH_SIZE = 25; // Limit batch size based on server capacity
+const BATCH_SIZE = 50; // Limit batch size based on server capacity
 
 export const POST = async (request) => {
   try {
