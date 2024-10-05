@@ -3,7 +3,6 @@ import Video from "@models/video";
 import { connectToDB } from "@utils/database";
 import { NextResponse } from 'next/server';
 import { createCanvas, loadImage } from 'canvas';
-import path from 'path';
 import AWS from 'aws-sdk';
 import fs from 'fs';
 import Papa from 'papaparse';
@@ -15,7 +14,7 @@ AWS.config.update({
 });
 
 const s3 = new AWS.S3();
-const BATCH_SIZE = 25; // Limit batch size based on server capacity
+const BATCH_SIZE = 50; // Limit batch size based on server capacity
 
 export const POST = async (request) => {
   try {

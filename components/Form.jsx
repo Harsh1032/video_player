@@ -198,31 +198,49 @@ const Form = () => {
     }
   };
 
-const submitBulkData = async (videos, originalFileName) => {
-  try {
-    const response = await fetch(`/api/generate-bulk`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ videos, originalFileName }),
-    });
+  const CHUNK_SIZE = 100; // Size of each chunk for uploads
 
-    const data = await response.json();
-    if (response.ok) {
-      toast.success("Templates successfully generated");
-      generateDownloadableFile(data.videoLinks, videos);
-      fetchVideos();
-      fetchCsvFiles();
-    } else {
-      toast.error(`${data.error}`);
+
+
+  const submitBulkData = async (videos, originalFileName) => {
+    try {
+      // Split videos into chunks
+      const chunks = splitIntoChunks(videos, CHUNK_SIZE);
+      for (const chunk of chunks) {
+        const response = await fetch(`/api/generate-bulk`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ videos: chunk, originalFileName }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          toast.error(`${data.error}`);
+        } else {
+          // Optionally, handle successful responses per chunk
+          toast.success("Templates successfully generated");
+          generateDownloadableFile(data.videoLinks, chunk);
+        }
+      }
+      fetchVideos(); // Refresh videos after all chunks have been uploaded
+      fetchCsvFiles(); // Refresh CSV history after upload
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("An error occurred while generating the bulk video links.");
     }
-  } catch (error) {
-    console.error("Error:", error);
-    toast.error("An error occurred while generating the bulk video links.");
-  }
-};
+  };
 
+  // Function to split the array into chunks
+  const splitIntoChunks = (array, chunkSize) => {
+    const chunks = [];
+    for (let i = 0; i < array.length; i += chunkSize) {
+      chunks.push(array.slice(i, i + chunkSize));
+    }
+    return chunks;
+  };
+  
   const getVideoDuration = (url) => {
     return new Promise((resolve) => {
       const video = document.createElement("video");
