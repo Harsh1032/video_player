@@ -15,6 +15,7 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 const BATCH_SIZE = 50; // Limit batch size based on server capacity
+const BATCH_DELAY = 10000; // Delay in milliseconds (5 seconds)
 
 export const POST = async (request) => {
   try {
@@ -104,6 +105,9 @@ export const POST = async (request) => {
       const batch = videos.slice(i, i + BATCH_SIZE);
       const batchResults = await processBatch(batch);
       processedVideos.push(...batchResults);
+      
+      // Add delay before processing the next batch
+      await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
     }
 
     // Generate CSV from processed videos

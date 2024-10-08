@@ -206,6 +206,8 @@ const Form = () => {
     try {
       // Split videos into chunks
       const chunks = splitIntoChunks(videos, CHUNK_SIZE);
+      const BATCH_DELAY = 5000; // Delay in milliseconds (5 seconds)
+  
       for (const chunk of chunks) {
         const response = await fetch(`/api/generate-bulk`, {
           method: "POST",
@@ -214,7 +216,7 @@ const Form = () => {
           },
           body: JSON.stringify({ videos: chunk, originalFileName }),
         });
-
+  
         const data = await response.json();
         if (!response.ok) {
           toast.error(`${data.error}`);
@@ -223,7 +225,11 @@ const Form = () => {
           toast.success("Templates successfully generated");
           generateDownloadableFile(data.videoLinks, chunk);
         }
+  
+        // Add a delay before processing the next chunk
+        await new Promise(resolve => setTimeout(resolve, BATCH_DELAY));
       }
+      
       fetchVideos(); // Refresh videos after all chunks have been uploaded
       fetchCsvFiles(); // Refresh CSV history after upload
     } catch (error) {
@@ -231,6 +237,7 @@ const Form = () => {
       toast.error("An error occurred while generating the bulk video links.");
     }
   };
+  
 
   // Function to split the array into chunks
   const splitIntoChunks = (array, chunkSize) => {
